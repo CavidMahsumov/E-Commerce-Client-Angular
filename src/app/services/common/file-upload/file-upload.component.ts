@@ -7,6 +7,8 @@ import { HttpClientService } from '../http-client.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FileUploadDialogComponent, FileUploadDialogState } from 'src/app/dialogs/file-upload-dialog/file-upload-dialog.component';
 import { DialogService } from '../dialog.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { SpinnerType } from 'src/app/base/base.component';
 
 @Component({
   selector: 'app-file-upload',
@@ -19,7 +21,8 @@ export class FileUploadComponent {
     private alertifyService: AlertifyService,
     private customToastrService: CustomToastrService,
     private dialog:MatDialog,
-    private dialogService:DialogService) { }
+    private dialogService:DialogService,
+    private spinner:NgxSpinnerService) { }
 
   public files: NgxFileDropEntry[];
 
@@ -28,24 +31,27 @@ export class FileUploadComponent {
   public selectedFiles(files: NgxFileDropEntry[]) {
     this.files = files;
     const fileData: FormData = new FormData();
-    for (const file of files) {
+    for (const file of files) { 
       (file.fileEntry as FileSystemFileEntry).file((_file: File) => {
         fileData.append(_file.name, _file, file.relativePath);
       });
     }
 
-    this.dialogService.openDialog({
+    this.dialogService.openDialog({ 
       componentType: FileUploadDialogComponent,
       data: FileUploadDialogState.Yes,
       afterClosed: () => {
+        this.spinner.show(SpinnerType.BallAtom)
         this.httpClientService.post({
           controller: this.options.controller,
           action: this.options.action,
           queryString: this.options.queryString,
           headers: new HttpHeaders({ "responseType": "blob" })
         }, fileData).subscribe(data => {
+          this.spinner.hide(SpinnerType.BallAtom);
 
           const message: string = "Dosyalar başarıyla yüklenmiştir.";
+          this.spinner.hide(SpinnerType.BallAtom);
 
           if (this.options.isAdminPage) {
             this.alertifyService.message(message,
@@ -62,7 +68,9 @@ export class FileUploadComponent {
           }
 
 
+
         }, (errorResponse: HttpErrorResponse) => {
+          this.spinner.hide();
 
           const message: string = "Dosyalar yüklenirken beklenmeyen bir hatayla karşılaşılmıştır.";
 
@@ -79,6 +87,7 @@ export class FileUploadComponent {
               position: ToastrPosition.TopRight
             })
           }
+
 
         });
       }

@@ -8,6 +8,8 @@ import { BaseComponent, SpinnerType } from '../../../../base/base.component';
 import { List_Product } from '../../../../contracts/list_product';
 import { AlertifyService, MessageType, Position } from '../../../../services/admin/alertify.service';
 import { ProductService } from '../../../../services/common/models/product.service';
+import { DialogService } from 'src/app/services/common/dialog.service';
+import { SelectImageProductDialogComponent } from 'src/app/dialogs/select-image-product-dialog/select-image-product-dialog.component';
 
 declare var $: any;
 
@@ -18,12 +20,13 @@ declare var $: any;
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent extends BaseComponent implements OnInit {
-  constructor(spinner: NgxSpinnerService, private productService: ProductService, private alertifyService: AlertifyService) {
+  constructor(spinner: NgxSpinnerService, private productService: ProductService, private alertifyService: AlertifyService,
+    private dialogService:DialogService) {
     super(spinner)
   }
 
 
-  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'edit', 'delete'];
+  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate','photos', 'edit', 'delete'];
   dataSource: MatTableDataSource<List_Product> = null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -37,12 +40,6 @@ export class ListComponent extends BaseComponent implements OnInit {
     this.dataSource = new MatTableDataSource<List_Product>(allProducts.products);
     this.paginator.length = allProducts.totalCount;
   }
-
-  //delete(id, event) {
-  //  const img: HTMLImageElement = event.srcElement;
-  //  $(img.parentElement.parentElement).fadeOut(2000);
-  //}
-
   async pageChanged() {
     await this.getProducts();
   }
@@ -51,12 +48,19 @@ export class ListComponent extends BaseComponent implements OnInit {
     await this.getProducts();
   }
 
+  addProductImages(id:string){
+    this.dialogService.openDialog({
+      componentType:SelectImageProductDialogComponent,
+      data:id,
+      options:{
+        width:"1400px"
+        
+
+      }
+      
+    })
+  }
+
 }
 
 
-//p.Id,
-//  p.Name,
-//  p.Stock,
-//  p.Price,
-//  p.CreatedDate,
-//  p.UpdatedDate
