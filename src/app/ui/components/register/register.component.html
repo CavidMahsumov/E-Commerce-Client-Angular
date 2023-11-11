@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <form [formGroup]="frm" (ngSubmit)="onSubmit(frm.value)">
+            <div class="mb-3">
+              <label for="Fullname" class="form-label">FullName</label>
+              <input type="text" formControlName="fullName" class="form-control" id="Fullname" [ngClass]="{'is-invalid':submitted &&component.fullName.errors}" >
+              <div  class="form-text invalid-feedback" *ngIf="submitted && component.fullName.errors.required">Please enter FullName</div>
+              <div  class="form-text invalid-feedback" *ngIf="submitted && (component.fullName.errors.maxlength||component.fullName.errors.minlength) ">Please enter min 3 max 50 element</div>
+              
+            </div>
+            <div class="mb-3">
+                <label for="userName" class="form-label">Username</label>
+                <input type="text" formControlName="userName" class="form-control" id="userName" aria-describedby="emailHelp">
+                <div class="form-text text-muted invalid-feedback" *ngIf="submitted && component.userName.errors.required">Please Enter Username</div>
+              </div>
+            <div class="mb-3">
+                <label for="email"  class="form-label">Email</label>
+                <input type="email" formControlName="email" class="form-control" id="email" placeholder="Email">
+                <div class="form-text text-muted invalid-feedback" *ngIf="submitted && component.email.errors.required">Please Enter Email</div>
+              </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" formControlName="password" class="form-control" id="password">
+            </div>
+            <div class="mb-3">
+                <label for="repeatpassword" class="form-label">Repeat Password</label>
+                <input  type="password" formControlName="repeatPassword" class="form-control" id="repeatpassword">
+                <div *ngIf="submitted && frm.hasError('notSame')">Check Password</div>
+              </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    </div>
+    <div class="col-md-3"></div>
+
+</div>
